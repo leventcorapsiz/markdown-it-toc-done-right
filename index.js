@@ -24,7 +24,7 @@ function htmlencode (x) {
 
 function tocPlugin (md, options) {
   options = Object.assign({}, {
-    placeholder: '(\\$\\{toc\\}|\\[\\[?_?toc_?\\]?\\])',
+    placeholder: '(\\$\\{toc\\}|\\[\\[?_?toc_?\\]?\\]|\\$\\<toc(\\{[^}]*\\})\\>)',
     slugify: slugify,
     containerClass: 'table-of-contents',
     listClass: undefined,
@@ -52,6 +52,15 @@ function tocPlugin (md, options) {
     if (!pattern.test(lineFirstToken)) return false
 
     if (silent) return true
+
+    let matches = pattern.exec(lineFirstToken)
+    if (matches !== null && matches.length === 3) {
+        try {
+            options = Object.assign(options, JSON.parse(matches[2]))
+        } catch (ex) {
+            // silently ignore inline options
+        }
+    }
 
     state.line = startLine + 1
 
