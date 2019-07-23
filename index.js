@@ -53,13 +53,13 @@ function tocPlugin (md, options) {
 
     if (silent) return true
 
-    let matches = pattern.exec(lineFirstToken)
+    const matches = pattern.exec(lineFirstToken)
     if (matches !== null && matches.length === 3) {
-        try {
-            options = Object.assign(options, JSON.parse(matches[2]))
-        } catch (ex) {
-            // silently ignore inline options
-        }
+      try {
+        options = Object.assign(options, JSON.parse(matches[2]))
+      } catch (ex) {
+        // silently ignore inline options
+      }
     }
 
     state.line = startLine + 1
