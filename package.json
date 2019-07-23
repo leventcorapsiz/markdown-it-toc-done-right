@@ -41,17 +41,17 @@
   "runkitExampleFilename": "runkit.js",
   "dependencies": {},
   "devDependencies": {
-    "coveralls": "^3.0.4",
-    "jest": "^24.8.0",
-    "markdown-it": "^9.0.0",
-    "markdown-it-anchor": "^5.2.4",
-    "microbundle": "^0.11.0",
-    "snazzy": "^8.0.0",
-    "standard": "^13.0.0",
-    "uslug": "^1.0.4"
+    "coveralls": "*",
+    "jest": "*",
+    "markdown-it": "*",
+    "markdown-it-anchor": "*",
+    "microbundle": "*",
+    "snazzy": "*",
+    "standard": "*",
+    "uslug": "*"
   },
   "peerDependencies": {
-    "markdown-it": "^8.4.1",
-    "markdown-it-anchor": "^5.0.2"
+    "markdown-it": "*",
+    "markdown-it-anchor": "*"
   }
 }
