@@ -1,18 +1,18 @@
 'use strict'
 
-function slugify (x) {
+function slugify(x) {
   return encodeURIComponent(String(x).trim().toLowerCase().replace(/\s+/g, '-'))
 }
 
-function htmlencode (x) {
-/*
-  // safest, delegate task to native -- IMPORTANT: enabling this breaks both jest and runkit, but with browserify it's fine
-  if (document && document.createElement) {
-    const el = document.createElement("div")
-    el.innerText = x
-    return el.innerHTML
-  }
-*/
+function htmlencode(x) {
+  /*
+    // safest, delegate task to native -- IMPORTANT: enabling this breaks both jest and runkit, but with browserify it's fine
+    if (document && document.createElement) {
+      const el = document.createElement("div")
+      el.innerText = x
+      return el.innerHTML
+    }
+  */
 
   return String(x)
     .replace(/&/g, '&amp;')
@@ -22,7 +22,7 @@ function htmlencode (x) {
     .replace(/>/g, '&gt;')
 }
 
-function tocPlugin (md, options) {
+function tocPlugin(md, options) {
   options = Object.assign({}, {
     placeholder: '(\\$\\{toc\\}|\\[\\[?_?toc_?\\]?\\])',
     slugify: slugify,
@@ -32,13 +32,14 @@ function tocPlugin (md, options) {
     linkClass: undefined,
     level: 1,
     listType: 'ol',
-    format: undefined
+    format: undefined,
+    tocCallback: undefined
   }, options)
 
   let ast
   const pattern = new RegExp('^' + options.placeholder + '$', 'i')
 
-  function toc (state, startLine, endLine, silent) {
+  function toc(state, startLine, endLine, silent) {
     let token
     const pos = state.bMarks[startLine] + state.tShift[startLine]
     const max = state.eMarks[startLine]
@@ -82,7 +83,7 @@ function tocPlugin (md, options) {
     return ast2html(ast)
   }
 
-  function ast2html (tree) {
+  function ast2html(tree) {
     const listClass = options.listClass ? ` class="${htmlencode(options.listClass)}"` : ''
     const itemClass = options.itemClass ? ` class="${htmlencode(options.itemClass)}"` : ''
     const linkClass = options.linkClass ? ` class="${htmlencode(options.linkClass)}"` : ''
@@ -100,9 +101,9 @@ function tocPlugin (md, options) {
     return buffer
   }
 
-  function headings2ast (tokens) {
+  function headings2ast(tokens) {
     const uniques = {}
-    function unique (s) {
+    function unique(s) {
       let u = s
       let i = 2
       while (Object.prototype.hasOwnProperty.call(uniques, u)) u = `${s}-${i++}`
@@ -158,6 +159,9 @@ function tocPlugin (md, options) {
   md.core.ruler.push('generateTocAst', function (state) {
     const tokens = state.tokens
     ast = headings2ast(tokens)
+    if (typeof options.tocCallback === 'function') {
+      options.tocCallback(md.renderer.rules.tocOpen() + md.renderer.rules.tocBody() + md.renderer.rules.tocClose())
+    }
   })
 
   md.block.ruler.before('heading', 'toc', toc, {
